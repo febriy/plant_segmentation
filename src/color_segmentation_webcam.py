@@ -1,6 +1,7 @@
 import cv2
 import time
 import numpy as np
+from utils import find_mask_contour_area
 
 # Creating a VideoCapture object
 cap = cv2.VideoCapture(0)
@@ -22,6 +23,9 @@ while True:
 
     mask = cv2.inRange(hsv, lower_green, upper_green)
     result = cv2.bitwise_and(frame, frame, mask=mask)
+
+    area = find_mask_contour_area(frame, mask)
+    print(area)
 
     cv2.imshow("frame", result)
     if cv2.waitKey(1) & 0xFF == ord("q"):

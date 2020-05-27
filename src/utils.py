@@ -4,6 +4,7 @@ from matplotlib import colors
 from matplotlib.colors import hsv_to_rgb
 from PIL import Image
 import os
+import cv2
 
 
 def view_pixel_color_graph(image):
@@ -34,3 +35,18 @@ def show_colour_space(lower_color, upper_color):
     plt.subplot(1, 2, 2)
     plt.imshow(hsv_to_rgb(lo_square))
     plt.show()
+
+
+def find_mask_contour_area(image, mask):
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
+    # cv2.imshow("opening", opening)
+    cnts = cv2.findContours(opening, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cnts[0] if len(cnts) == 2 else cnts[1]
+
+    area = 0
+    for c in cnts:
+        area += cv2.contourArea(c)
+        cv2.drawContours(image, [c], 0, (0, 0, 0), 2)
+
+    return area
