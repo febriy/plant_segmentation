@@ -3,6 +3,14 @@ from dataloader import *
 from preprocessing import *
 
 base_path = Path(__file__).parent.parent
+data_path = Path(base_path / "data/").resolve()
+
+df = pd.read_csv(data_path / "my_metadata.csv")
+
+# location of original and mask image
+img_fol = data_path / "mytrain-128"
+mask_fol = data_path / "mytrain_masks_bw-128"
+
 
 test_dataloader = PlantDataloader(df, img_fol, mask_fol, mean, std, "val", 1, 4)
 ckpt_path = base_path / "model_office.pth"
