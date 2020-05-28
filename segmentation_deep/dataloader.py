@@ -31,13 +31,13 @@ def get_transform(phase, mean, std):
         list_trans.extend(
             [
                 HorizontalFlip(p=0.5),
-                RGBShift(r_shift_limit=45, g_shift_limit=0, b_shift_limit=34, p=0.5),
+                RGBShift(r_shift_limit=40, g_shift_limit=0, b_shift_limit=40, p=0.5),
                 HueSaturationValue(
-                    hue_shift_limit=0, sat_shift_limit=255, val_shift_limit=255, p=0.5
+                    hue_shift_limit=10, sat_shift_limit=150, val_shift_limit=100, p=0.5
                 ),
-                # RandomContrast(limit=2, p=0.5),
-                # RandomBrightness(limit=1.5, p=0.5),
-                InvertImg(p=0.5),
+                RandomContrast(limit=1.2, p=0.5),
+                RandomBrightness(limit=1.2, p=0.5),
+                # InvertImg(p=0.5),
             ]
         )
 
