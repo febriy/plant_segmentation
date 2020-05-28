@@ -1,67 +1,22 @@
-# visualization library
-import cv2
-from matplotlib import pyplot as plt
-
-# data storing library
-import numpy as np
+import os
+from pathlib import Path
 import pandas as pd
-
-# torch libraries
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-import torch
-import torch.nn as nn
-from torch.nn import functional as F
-import torch.optim as optim
-import torch.backends.cudnn as cudnn
+import cv2
 from torch.utils.data import DataLoader, Dataset, sampler
-
-# architecture and data split library
 from sklearn.model_selection import train_test_split
-import segmentation_models_pytorch as smp
 
 # augmenation library
 from albumentations import (
     HorizontalFlip,
-    ShiftScaleRotate,
     Normalize,
-    Resize,
     Compose,
-    GaussNoise,
+    HueSaturationValue,
+    RandomContrast,
+    RandomBrightness,
+    RGBShift,
+    InvertImg,
 )
 from albumentations.pytorch import ToTensor
-
-# others
-import os
-import pdb
-import time
-import warnings
-import random
-from tqdm import tqdm_notebook as tqdm
-import concurrent.futures
-from pathlib import Path
-import PIL
-
-# warning print supression
-warnings.filterwarnings("ignore")
-
-# *****************to reproduce same results fixing the seed and hash*******************
-seed = 42
-random.seed(seed)
-os.environ["PYTHONHASHSEED"] = str(seed)
-np.random.seed(seed)
-torch.cuda.manual_seed(seed)
-torch.manual_seed(seed)
-torch.backends.cudnn.deterministic = True
-
-
-base_path = Path(__file__).parent.parent
-data_path = Path(base_path / "data/").resolve()
-
-df = pd.read_csv(data_path / "Metadata.csv")
-
-# location of original and mask image
-img_fol = data_path / "train-128"
-mask_fol = data_path / "train_masks_bw-128"
 
 # imagenet mean/std will be used as the resnet backbone is trained on imagenet stats
 mean, std = (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
@@ -73,7 +28,19 @@ mean, std = (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
 def get_transform(phase, mean, std):
     list_trans = []
     if phase == "train":
-        list_trans.extend([HorizontalFlip(p=0.5)])
+        list_trans.extend(
+            [
+                HorizontalFlip(p=0.5),
+                RGBShift(r_shift_limit=45, g_shift_limit=0, b_shift_limit=34, p=0.5),
+                HueSaturationValue(
+                    hue_shift_limit=0, sat_shift_limit=255, val_shift_limit=255, p=0.5
+                ),
+                # RandomContrast(limit=2, p=0.5),
+                # RandomBrightness(limit=1.5, p=0.5),
+                InvertImg(p=0.5),
+            ]
+        )
+
     list_trans.extend(
         [Normalize(mean=mean, std=std, p=1), ToTensor()]
     )  # normalizing the data & then converting to tensors
@@ -118,6 +85,37 @@ def PlantDataloader(df, img_fol, mask_fol, mean, std, phase, batch_size, num_wor
     df_train, df_valid = train_test_split(df, test_size=0.2, random_state=69)
     df = df_train if phase == "train" else df_valid
     for_loader = PlantDataset(df, img_fol, mask_fol, mean, std, phase)
+    dataloader = DataLoader(
+        for_loader, batch_size=batch_size, num_workers=num_workers, pin_memory=True
+    )
+
+    return dataloader
+
+
+class PlantToInfer(Dataset):
+    def __init__(self, img_fol, mean, std):
+        self.img_fol = img_fol
+        self.mean = mean
+        self.std = std
+        self.transform = get_transform("val", mean, std)
+
+    def __getitem__(self, idx):
+        img_name_path = str(list(self.img_fol.iterdir())[idx])
+        print("img_name_path", img_name_path)
+
+        img = cv2.imread(img_name_path)
+        mask = cv2.imread(img_name_path, cv2.IMREAD_GRAYSCALE)
+        augmentation = self.transform(image=img, mask=mask)
+        img_aug = augmentation["image"]  # [3,128,128] type:Tensor
+        mask_aug = augmentation["mask"]  # [1,128,128] type:Tensor
+        return img_aug, mask_aug
+
+    def __len__(self):
+        return len(list(self.img_fol.iterdir()))
+
+
+def PlantToInferloader(img_fol, mean, std, batch_size, num_workers):
+    for_loader = PlantToInfer(img_fol, mean, std)
     dataloader = DataLoader(
         for_loader, batch_size=batch_size, num_workers=num_workers, pin_memory=True
     )

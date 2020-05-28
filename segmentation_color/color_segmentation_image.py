@@ -16,23 +16,29 @@ def open_image(image_dir):
     return hsv_plant, plant
 
 
-# Set threshold
-lower_green = (25, 50, 25)
-upper_green = (120, 255, 255)
-
-
 if __name__ == "__main__":
-    hsv_plant, plant = open_image("data/lettuce.jpeg")
-    mask = cv2.inRange(hsv_plant, lower_green, upper_green)
-    result = cv2.bitwise_and(plant, plant, mask=mask)
+    base_path = Path(__file__).parent.parent
+    data_path = Path(base_path / "data/").resolve()
 
-    # use contours to find mask area
-    # https://stackoverflow.com/questions/57282935/how-to-detect-area-of-pixels-with-the-same-color-using-opencv
-    area = find_mask_contour_area(plant, mask)
-    print(area)
+    img_fol = data_path / "mydata-128"
 
-    plt.subplot(1, 2, 1)
-    plt.imshow(mask, cmap="gray")
-    plt.subplot(1, 2, 2)
-    plt.imshow(result)
-    plt.show()
+    # Set threshold
+    lower_green = (10, 10, 10)
+    upper_green = (130, 255, 255)
+
+    for idx, image_path in enumerate(list(img_fol.iterdir())):
+        hsv_plant, plant = open_image(image_path)
+
+        mask = cv2.inRange(hsv_plant, lower_green, upper_green)
+        result = cv2.bitwise_and(plant, plant, mask=mask)
+
+        # use contours to find mask area
+        # https://stackoverflow.com/questions/57282935/how-to-detect-area-of-pixels-with-the-same-color-using-opencv
+        area = find_mask_contour_area(plant, mask)
+        print(area)
+
+        plt.subplot(1, 2, 1)
+        plt.imshow(mask, cmap="gray")
+        plt.subplot(1, 2, 2)
+        plt.imshow(result)
+        plt.show()
