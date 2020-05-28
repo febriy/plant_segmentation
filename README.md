@@ -23,3 +23,4 @@ The codes for deep-learning based image segmentation is WIP.
 - https://www.plant-phenotyping.org/datasets-home
 - https://github.com/p2irc/deepplantphenomics
 - https://realpython.com/python-opencv-color-spaces/
+- https://medium.com/analytics-vidhya/pytorch-implementation-of-semantic-segmentation-for-single-class-from-scratch-81f96643c98c
