@@ -36,5 +36,7 @@ for i, batch in enumerate(test_dataloader):
     batch_preds = torch.sigmoid(model(images.to(device)))
     batch_preds = batch_preds.detach().cpu().numpy()
     ax1.imshow(np.squeeze(batch_preds), cmap="gray")
-    ax2.imshow(np.squeeze(mask_target), cmap="gray")
+    print(np.squeeze(mask_target))
+    ax2.imshow(np.squeeze(mask_target))  # if using own dataset
+    # ax2.imshow(np.squeeze(mask_target), cmap="gray")
     plt.show()

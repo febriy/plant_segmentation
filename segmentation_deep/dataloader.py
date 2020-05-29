@@ -100,12 +100,11 @@ class PlantToInfer(Dataset):
         img_name_path = str(list(self.img_fol.iterdir())[idx])
         print("img_name_path", img_name_path)
 
-        img = cv2.imread(img_name_path)
-        mask = cv2.imread(img_name_path, cv2.IMREAD_GRAYSCALE)
-        augmentation = self.transform(image=img, mask=mask)
+        img_toinfer = cv2.imread(img_name_path)
+        img_original = cv2.imread(img_name_path, cv2.COLOR_BGR2RGB)
+        augmentation = self.transform(image=img_toinfer, mask=img_original)
         img_aug = augmentation["image"]  # [3,128,128] type:Tensor
-        mask_aug = augmentation["mask"]  # [1,128,128] type:Tensor
-        return img_aug, mask_aug
+        return img_aug, img_original
 
     def __len__(self):
         return len(list(self.img_fol.iterdir()))
