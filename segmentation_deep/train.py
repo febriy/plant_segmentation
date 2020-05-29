@@ -55,7 +55,7 @@ class Trainer(object):
         self.batch_size = {"train": 1, "val": 1}
         self.accumulation_steps = 4 // self.batch_size["train"]
         self.lr = 5e-4
-        self.num_epochs = 100
+        self.num_epochs = 150
         self.phases = ["train", "val"]
         self.best_loss = float("inf")
         self.device = torch.device("cuda:0")

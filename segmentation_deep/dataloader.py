@@ -5,7 +5,7 @@ import cv2
 from torch.utils.data import DataLoader, Dataset, sampler
 from sklearn.model_selection import train_test_split
 
-# augmenation library
+# image augmantation library
 from albumentations import (
     HorizontalFlip,
     Normalize,
@@ -14,7 +14,8 @@ from albumentations import (
     RandomContrast,
     RandomBrightness,
     RGBShift,
-    InvertImg,
+    CenterCrop,
+    RandomGamma,
 )
 from albumentations.pytorch import ToTensor
 
@@ -22,27 +23,25 @@ from albumentations.pytorch import ToTensor
 mean, std = (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
 
 
-# during traning/val phase make a list of transforms to be used.
-# input-->"phase",mean,std
-# output-->list
-def get_transform(phase, mean, std):
+def get_transform(phase: str, mean: float, std: float) -> list:
+    """Make a list of transformations to be used."""
     list_trans = []
     if phase == "train":
         list_trans.extend(
             [
                 HorizontalFlip(p=0.5),
-                RGBShift(r_shift_limit=40, g_shift_limit=0, b_shift_limit=40, p=0.5),
+                RGBShift(r_shift_limit=10, g_shift_limit=40, b_shift_limit=10, p=0.5),
                 HueSaturationValue(
-                    hue_shift_limit=10, sat_shift_limit=150, val_shift_limit=100, p=0.5
+                    hue_shift_limit=10, sat_shift_limit=150, val_shift_limit=10, p=0.5
                 ),
-                RandomContrast(limit=1.2, p=0.5),
-                RandomBrightness(limit=1.2, p=0.5),
-                # InvertImg(p=0.5),
+                RandomContrast(limit=1.1, p=0.5),
+                RandomBrightness(limit=1.1, p=0.5),
+                CenterCrop(height=64, width=64, p=0.5),
             ]
         )
 
     list_trans.extend(
-        [Normalize(mean=mean, std=std, p=1), ToTensor()]
+        [Normalize(mean=mean, std=std, p=1), ToTensor(),]
     )  # normalizing the data & then converting to tensors
     list_trans = Compose(list_trans)
     return list_trans
@@ -78,10 +77,8 @@ class PlantDataset(Dataset):
         return len(self.fname)
 
 
-"""divide data into train and val and return the dataloader depending upon train or val phase."""
-
-
 def PlantDataloader(df, img_fol, mask_fol, mean, std, phase, batch_size, num_workers):
+    """divide data into train and val and return the dataloader depending upon train or val phase."""
     df_train, df_valid = train_test_split(df, test_size=0.2, random_state=69)
     df = df_train if phase == "train" else df_valid
     for_loader = PlantDataset(df, img_fol, mask_fol, mean, std, phase)
