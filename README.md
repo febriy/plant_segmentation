@@ -24,6 +24,7 @@ You can run `python color_segmentation_image.py` if you are using photos, or `py
 Code is largely from this [article](https://medium.com/analytics-vidhya/pytorch-implementation-of-semantic-segmentation-for-single-class-from-scratch-81f96643c98c)
 
 1. Prepare dataset
+
    Prepare your training dataset and infernce dataset in folders named `train`, `train_masks_png` and `mydata_png`.
 
 Run `python preprocessing.py`
