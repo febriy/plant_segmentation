@@ -27,15 +27,15 @@ Code is largely from this [article](https://medium.com/analytics-vidhya/pytorch-
 
    Prepare your training dataset and infernce dataset in folders named `train`, `train_masks_png` and `mydata_png`.
 
-Run `python preprocessing.py`
+   Run `python preprocessing.py`
 
 2. Train model
 
-Run `python train.py`
+   Run `python train.py`
 
 3. Model inference
 
-Run `python infer.py`
+   Run `python infer.py`
 
 ## Current Performance
 
