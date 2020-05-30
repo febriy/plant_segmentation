@@ -51,6 +51,13 @@ Code is largely from this [article](https://medium.com/analytics-vidhya/pytorch-
 
 ![](./docs/Figure_7.png)
 
+Notice that the model is able to pick out the leaves under light condition similar to the sample dataset (top photo). However, performance drops as lighting is changed, usually to purple as this is the common 'grow light' color. 
+
+### Future experiments
+- Desaturating training dataset to make color less significant
+- Adding purple to training dataset
+- Removing purple color before inference
+
 ## Resources
 
 - https://www.plant-phenotyping.org/datasets-home
