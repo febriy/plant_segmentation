@@ -53,6 +53,10 @@ Code is largely from this [article](https://medium.com/analytics-vidhya/pytorch-
 
 Notice that the model is able to pick out the leaves under light condition similar to the sample dataset (top photo). However, performance drops as lighting is changed, usually to purple as this is the common 'grow light' color. 
 
+Retraining with colour augmentation improved the performance.
+
+For further development, it is important to look at the potential place where you will deploy this and tweak the model accordingly. 
+
 ### Future experiments
 - Desaturating training dataset to make color less significant
 - Adding purple to training dataset

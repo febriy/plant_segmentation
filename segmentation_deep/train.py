@@ -42,12 +42,6 @@ torch.backends.cudnn.deterministic = True
 base_path = Path(__file__).parent.parent
 data_path = Path(base_path / "data/").resolve()
 
-df = pd.read_csv(data_path / "Metadata.csv")
-
-# location of original and mask image
-img_fol = data_path / "train-128"
-mask_fol = data_path / "train_masks_bw-128"
-
 
 class Trainer(object):
     def __init__(self, model):
@@ -55,7 +49,7 @@ class Trainer(object):
         self.batch_size = {"train": 1, "val": 1}
         self.accumulation_steps = 4 // self.batch_size["train"]
         self.lr = 5e-4
-        self.num_epochs = 150
+        self.num_epochs = 250
         self.phases = ["train", "val"]
         self.best_loss = float("inf")
         self.device = torch.device("cuda:0")
@@ -140,6 +134,12 @@ class Trainer(object):
 
 
 if __name__ == "__main__":
-    model = smp.Unet("resnet18", encoder_weights="imagenet", classes=1, activation=None)
+    df = pd.read_csv(data_path / "Metadata.csv")
+
+    # location of original and mask image
+    img_fol = data_path / "train-256"
+    mask_fol = data_path / "train_masks-256"
+
+    model = smp.Unet("resnet50", encoder_weights="imagenet", classes=1, activation=None)
     model_trainer = Trainer(model)
     model_trainer.start()

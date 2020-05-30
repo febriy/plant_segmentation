@@ -12,7 +12,7 @@ data_path = Path(base_path / "data/").resolve()
 df = pd.read_csv(data_path / "my_metadata.csv")
 
 # location of original and mask image
-img_fol = data_path / "mydata-128"
+img_fol = data_path / "mydata-512"
 mask_fol = data_path / "mytrain_masks_bw-128"
 
 
@@ -21,7 +21,7 @@ test_dataloader = PlantToInferloader(img_fol, mean, std, 1, 4)
 ckpt_path = base_path / "model_office.pth"
 
 device = torch.device("cuda")
-model = smp.Unet("resnet18", encoder_weights=None, classes=1, activation=None)
+model = smp.Unet("resnet50", encoder_weights=None, classes=1, activation=None)
 model.to(device)
 model.eval()
 state = torch.load(ckpt_path, map_location=lambda storage, loc: storage)
@@ -36,7 +36,6 @@ for i, batch in enumerate(test_dataloader):
     batch_preds = torch.sigmoid(model(images.to(device)))
     batch_preds = batch_preds.detach().cpu().numpy()
     ax1.imshow(np.squeeze(batch_preds), cmap="gray")
-    print(np.squeeze(mask_target))
     ax2.imshow(np.squeeze(mask_target))  # if using own dataset
     # ax2.imshow(np.squeeze(mask_target), cmap="gray")
     plt.show()
