@@ -53,10 +53,10 @@ def get_transform(phase: str, mean: float, std: float) -> list:
     elif phase == "val":
         list_trans.extend(
             [
-                RGBShift(r_shift_limit=80, g_shift_limit=150, b_shift_limit=80, p=0.5),
-                HueSaturationValue(
-                    hue_shift_limit=30, sat_shift_limit=40, val_shift_limit=30, p=0.5
-                ),
+                # RGBShift(r_shift_limit=80, g_shift_limit=150, b_shift_limit=80, p=0.5),
+                # HueSaturationValue(
+                #     hue_shift_limit=30, sat_shift_limit=40, val_shift_limit=30, p=0.5
+                # ),
             ]
         )
 
@@ -87,11 +87,20 @@ class PlantDataset(Dataset):
         )
 
         img = cv2.imread(img_name_path, cv2.COLOR_BGR2RGB)
-        mask = cv2.imread(mask_name_path, cv2.IMREAD_GRAYSCALE)
+        mask = cv2.imread(mask_name_path, cv2.IMREAD_GRAYSCALE)  # , cv2.COLOR_BGR2RGB)
 
-        # this is to change background to white
+        ## this is to change background to white
         # ret, thresh = cv2.threshold(mask, 5, 255, cv2.THRESH_BINARY)
         # img[thresh == 0] = 255
+
+        ## change bg to another image
+        # to add: choose random images
+        # base_path = Path(__file__).parent.parent
+        # data_path = Path(base_path / "data/").resolve()
+
+        # bg_name_path = str(data_path / "mydata-256/picam.png")
+        # bg = cv2.imread(bg_name_path, cv2.COLOR_BGR2RGB)
+        # img[mask == 0] = bg[mask == 0]
 
         augmentation = self.transform(image=img, mask=mask)
         img_aug = augmentation["image"]  # [3,128,128] type:Tensor

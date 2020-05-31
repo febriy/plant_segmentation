@@ -140,6 +140,6 @@ if __name__ == "__main__":
     img_fol = data_path / "train-256"
     mask_fol = data_path / "train_masks-256"
 
-    model = smp.Unet("resnet50", encoder_weights="imagenet", classes=1, activation=None)
+    model = smp.Unet("resnet34", encoder_weights="imagenet", classes=1, activation=None)
     model_trainer = Trainer(model)
     model_trainer.start()

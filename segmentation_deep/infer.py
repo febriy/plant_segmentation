@@ -12,7 +12,7 @@ data_path = Path(base_path / "data/").resolve()
 df = pd.read_csv(data_path / "my_metadata.csv")
 
 # location of original and mask image
-img_fol = data_path / "mydata-512"
+img_fol = data_path / "mydata-256"
 mask_fol = data_path / "mytrain_masks_bw-128"
 
 
@@ -21,7 +21,7 @@ test_dataloader = PlantToInferloader(img_fol, mean, std, 1, 4)
 ckpt_path = base_path / "model_office.pth"
 
 device = torch.device("cuda")
-model = smp.Unet("resnet50", encoder_weights=None, classes=1, activation=None)
+model = smp.Unet("resnet34", encoder_weights=None, classes=1, activation=None)
 model.to(device)
 model.eval()
 state = torch.load(ckpt_path, map_location=lambda storage, loc: storage)

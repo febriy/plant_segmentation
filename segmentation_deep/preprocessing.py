@@ -29,8 +29,8 @@ def resize_img(fn):
 
 
 def resize_myimg(fn):
-    PIL.Image.open(fn).resize((512, 512)).save(
-        (fn.parent.parent) / "mydata-512" / fn.name
+    PIL.Image.open(fn).resize((256, 256)).save(
+        (fn.parent.parent) / "mydata-256" / fn.name
     )
 
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     (data_path / "train_masks-256").mkdir(exist_ok=True)
     (data_path / "train_masks_bw-256").mkdir(exist_ok=True)
     (data_path / "train-256").mkdir(exist_ok=True)
-    (data_path / "mydata-512").mkdir(exist_ok=True)
+    (data_path / "mydata-256").mkdir(exist_ok=True)
 
     files = list((data_path / "train_masks_png").iterdir())
     with concurrent.futures.ThreadPoolExecutor(8) as e:
