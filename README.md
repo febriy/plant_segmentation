@@ -51,7 +51,7 @@ Notice that the model is able to pick out the leaves under light condition simil
 
 Retraining with colour augmentation improved the performance.
 
-## Built with
+### Built with
 - OpenCV
 - PyTorch
 
