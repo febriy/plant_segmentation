@@ -1,5 +1,5 @@
 # Image Segmentation for Plant Phenotyping
-Find plant canopy area using computer vision. 
+Finding plant canopy area using computer vision. 
 
 Goal: Recognise plant leaves from live images and determine plant size and additionally, growth rate. 
 
